@@ -8,6 +8,20 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
+
+class TextInputWithLabel(forms.TextInput):
+    def __init__(self, *args, **kwargs):
+        self.label = kwargs.pop('label')
+        super(TextInputWithLabel, self).__init__(*args, **kwargs)
+
+    def render(self, name, value, attrs=None):
+        id_ = u'id_%s' % name
+        output = [
+            u'<label for="%s">%s</label>' % (id_, self.label),
+            super(TextInputWithLabel, self).render(name, value, attrs)
+        ]
+        return mark_safe(''.join(output))
+
 class LinkWidget(forms.Widget):
     def __init__(self, attrs=None, choices=()):
         super(LinkWidget, self).__init__(attrs)
@@ -81,3 +95,16 @@ class LookupTypeWidget(forms.MultiWidget):
         if value is None:
             return [None, None]
         return value
+
+class DateHierarchyWidget(forms.MultiWidget):
+    def __init__(self, attrs=None):
+        widgets = [TextInputWithLabel(attrs=attrs, label=l) for l in ['Year', 'Month', 'Day']]
+        super(DateHierarchyWidget, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value.year, value.month, value.day]
+        return [None, None, None]
+
+    def format_output(self, rendered_widgets):
+        return u''.join(rendered_widgets)

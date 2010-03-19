@@ -5,12 +5,12 @@ from django.db.models import Q
 from django.db.models.sql.constants import QUERY_TERMS
 from django.utils.translation import ugettext_lazy as _
 
-from django_filters.fields import RangeField, LookupTypeField
+from django_filters.fields import RangeField, LookupTypeField, DateHierarchyField
 
 __all__ = [
     'Filter', 'CharFilter', 'BooleanFilter', 'ChoiceFilter',
-    'MultipleChoiceFilter', 'DateFilter', 'DateTimeFilter', 'TimeFilter',
-    'ModelChoiceFilter', 'ModelMultipleChoiceFilter', 'NumberFilter',
+    'MultipleChoiceFilter', 'DateHierarchyFilter', 'DateFilter', 'DateTimeFilter',
+    'TimeFilter', 'ModelChoiceFilter', 'ModelMultipleChoiceFilter', 'NumberFilter',
     'RangeFilter', 'DateRangeFilter', 'AllValuesFilter',
 ]
 
@@ -117,6 +117,22 @@ class RangeFilter(Filter):
     def filter(self, qs, value):
         if value:
             return qs.filter(**{'%s__range' % self.name: (value.start, value.stop)})
+        return qs
+
+class DateHierarchyFilter(Filter):
+    field_class = DateHierarchyField
+
+    def filter(self, qs, value):
+        if value:
+            year, month, day = value
+            
+            if year:
+                qs = qs.filter(**{'%s__year' % self.name: year})
+            if month:
+                qs = qs.filter(**{'%s__month' % self.name: month})
+            if day:
+                qs = qs.filter(**{'%s__day' % self.name: day})
+        
         return qs
 
 class DateRangeFilter(ChoiceFilter):

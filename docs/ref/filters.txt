@@ -35,6 +35,12 @@ selects the OR of all the choices.
 
 Matches on a date.  Used with ``DateField`` by default.
 
+``DateHierarchyFilter``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This filter provides functionality similar to the date hierarchy in Django's
+admin interface.
+
 ``DateTimeFilter``
 ~~~~~~~~~~~~~~~~~~
 

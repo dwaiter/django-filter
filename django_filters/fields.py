@@ -1,6 +1,6 @@
 from django import forms
 
-from django_filters.widgets import RangeWidget, LookupTypeWidget
+from django_filters.widgets import RangeWidget, LookupTypeWidget, DateHierarchyWidget
 
 class RangeField(forms.MultiValueField):
     widget = RangeWidget
@@ -32,3 +32,14 @@ class LookupTypeField(forms.MultiValueField):
 
     def compress(self, data_list):
         return data_list
+
+class DateHierarchyField(forms.MultiValueField):
+    widget = DateHierarchyWidget
+
+    def __init__(self, *args, **kwargs):
+        fields = (forms.IntegerField(), forms.IntegerField(), forms.IntegerField())
+        super(DateHierarchyField, self).__init__(fields, *args, **kwargs)
+
+    def compress(self, data_list):
+        return data_list
+
